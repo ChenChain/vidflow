@@ -1,6 +1,7 @@
 package coze
 
 import (
+	"context"
 	"time"
 	"vidflow/infra/util"
 )
@@ -57,4 +58,8 @@ func GenJwt(issId, sessionName string) (string, int64, error) {
 		return "", 0, err
 	}
 	return token, exp, nil
+}
+
+func DoAuth(context context.Context, issId, aud, exp, sessionName string) (string, int64, error) {
+
 }
