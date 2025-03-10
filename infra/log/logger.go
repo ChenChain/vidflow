@@ -4,14 +4,13 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
-// 分布式追踪上下文键
 const (
 	TraceIDKey = "trace_id"
-	SpanIDKey  = "span_id"
 )
 
 // Logger 是一个支持分布式追踪的日志类
@@ -69,18 +68,17 @@ func NewLogger(level zapcore.Level, enableTrace bool) *Logger {
 }
 
 // 获取 Trace ID 和 Span ID 从 Context
-func extractTraceInfo(ctx context.Context) (string, string) {
+func extractTraceInfo(ctx context.Context) string {
 	traceID, _ := ctx.Value(TraceIDKey).(string)
-	spanID, _ := ctx.Value(SpanIDKey).(string)
-	return traceID, spanID
+	return traceID
 }
 
 // 包裹 Zap 日志方法，将 Trace 信息添加到日志
 func (l *Logger) logWithTrace(ctx context.Context, level zapcore.Level, msg string, fields ...zap.Field) {
-	traceID, spanID := extractTraceInfo(ctx)
+	traceID := extractTraceInfo(ctx)
 
 	// 添加 Trace ID 和 Span ID 信息
-	logFields := append(fields, zap.String(TraceIDKey, traceID), zap.String(SpanIDKey, spanID))
+	logFields := append(fields, zap.String(TraceIDKey, traceID))
 
 	// 根据日志级别记录日志
 	switch level {
@@ -120,8 +118,12 @@ func (l *Logger) Fatal(ctx context.Context, msg string, fields ...zap.Field) {
 }
 
 // 示例：将 Trace 信息传递到 Context
-func WithTrace(ctx context.Context, traceID, spanID string) context.Context {
+func WithTrace(ctx context.Context, traceID string) context.Context {
 	ctx = context.WithValue(ctx, TraceIDKey, traceID)
-	ctx = context.WithValue(ctx, SpanIDKey, spanID)
 	return ctx
+}
+
+// 自动生成 Trace ID (可以直接用 UUID)
+func generateTraceID() string {
+	return uuid.New().String() // 生成一个 UUID 作为 Trace ID
 }
