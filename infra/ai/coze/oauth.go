@@ -2,8 +2,8 @@ package coze
 
 import (
 	"context"
-	"time"
-	"vidflow/infra/util"
+	"github.com/coze-dev/coze-go"
+	"github.com/pkg/errors"
 )
 
 // pub e0QEnUBk2f3ySWH57o8c48GljV6xITmQxOzulEpodFs
@@ -38,28 +38,24 @@ aWxmcTnU5nqmY/ZmGN+0L5CGxtJ/azC3HMLjAzoK8nYED5JW2lapIMNsXeMtgW7N
 -----END PRIVATE KEY-----
 `
 
-func GenJwt(issId, sessionName string) (string, int64, error) {
-	privateKey, err := util.LoadPrivateKeyFromString(key)
-	if err != nil {
-		return "", 0, err
-	}
-	now := time.Now()
-	exp := now.Add(1 * time.Hour).Unix()
-	// 生成 JWT
-	token, err := util.GenerateJWT(privateKey, map[string]interface{}{
-		"iss":          issId,
-		"aud":          "api.coze.cn",
-		"exp":          exp,
-		"iat":          now.Unix(),
-		"jti":          "jti-aaa",
-		"session_name": sessionName,
-	})
-	if err != nil {
-		return "", 0, err
-	}
-	return token, exp, nil
-}
+func genOAuth(ctx context.Context) (string, int64, error) {
+	// The default access is api.coze.com, but if you need to access api.coze.cn,
+	// please use base_url to configure the api endpoint to access
+	cozeAPIBase := "https://api.coze.cn"
+	jwtOauthClientID := "1138705214321"
+	jwtOauthPrivateKey := key
+	jwtOauthPublicKeyID := "e0QEnUBk2f3ySWH57o8c48GljV6xITmQxOzulEpodFs"
 
-func DoAuth(context context.Context, issId, aud, exp, sessionName string) (string, int64, error) {
+	oauth, err := coze.NewJWTOAuthClient(coze.NewJWTOAuthClientParam{
+		ClientID: jwtOauthClientID, PublicKey: jwtOauthPublicKeyID, PrivateKeyPEM: jwtOauthPrivateKey,
+	}, coze.WithAuthBaseURL(cozeAPIBase))
+	if err != nil {
+		return "", 0, errors.Wrapf(err, "Error creating JWT OAuth client: %v", err)
+	}
 
+	resp, err := oauth.GetAccessToken(ctx, nil)
+	if err != nil {
+		return "", 0, errors.Wrapf(err, "Error getting access token")
+	}
+	return resp.AccessToken, resp.ExpiresIn, nil
 }
