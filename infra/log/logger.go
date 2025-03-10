@@ -70,6 +70,10 @@ func NewLogger(level zapcore.Level, enableTrace bool) *Logger {
 // 获取 Trace ID 和 Span ID 从 Context
 func extractTraceInfo(ctx context.Context) string {
 	traceID, _ := ctx.Value(TraceIDKey).(string)
+	if traceID == "" {
+		traceID = uuid.New().String()
+		ctx = context.WithValue(ctx, TraceIDKey, traceID)
+	}
 	return traceID
 }
 
