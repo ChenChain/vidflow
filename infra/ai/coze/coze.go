@@ -38,11 +38,11 @@ func (c *Cli) selfCheck(ctx context.Context) error {
 }
 
 // pom :7478984023528865829
-func (c *Cli) Chat(ctx context.Context, botId, userId string) (string, error) {
+func (c *Cli) Chat(ctx context.Context, botId, userId, msg string) (string, error) {
 	if err := c.selfCheck(ctx); err != nil {
 		return "", err
 	}
-	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
 	defer cancel()
 
 	token := c.Token
@@ -57,7 +57,7 @@ func (c *Cli) Chat(ctx context.Context, botId, userId string) (string, error) {
 		BotID:  botID,
 		UserID: userID,
 		Messages: []*coze.Message{
-			coze.BuildUserQuestionText("What can you do?", nil),
+			coze.BuildUserQuestionText(msg, nil),
 		},
 	}
 

@@ -27,3 +27,5 @@ go.work.sum
 test
 test.pub
 .idea
+
+static/*
