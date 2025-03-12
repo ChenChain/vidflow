@@ -1,0 +1,1 @@
+https://github.com/dreammis/social-auto-upload

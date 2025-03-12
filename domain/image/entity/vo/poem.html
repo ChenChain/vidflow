@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>观书有感 - 手机版展示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* 禁止额外滚动条 */
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: "KaiTi", "KaiTi SC", serif; /* 使用简体中文字体 */
+            font-size: 18px;
+            background: url('./testimg1.jpeg') no-repeat center center; /* 背景图 */
+            background-size: cover; /* 确保图片覆盖，并保持比例 */
+            color: #fff; /* 字体颜色设置为白色 */
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.3); /* 半透明黑色背景，提高可读性 */
+            padding: 20px;
+            width: 90%; /* 宽度自适应屏幕 */
+            max-width: 800px;
+            border-radius: 12px; /* 圆角背景 */
+            text-align: center; /* 中心对齐文字 */
+            line-height: 1.6; /* 行间距 */
+        }
+
+        .title {
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .author-info {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .content {
+            font-size: 22px;
+            white-space: pre-wrap; /* 保留换行格式 */
+            margin-bottom: 30px;
+        }
+
+        .meaning {
+            font-size: 16px;
+            font-style: italic;
+            text-align: left; /* 左对齐注释 */
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="title" id="title"></div>
+    <div class="author-info" id="author-info"></div>
+    <div class="content" id="content"></div>
+    <div class="meaning" id="meaning"></div>
+</div>
+
+<script>
+    // JSON数据
+    const data = {
+        "title": "《观书有感二首・其一》",
+        "content": "半亩方塘一鉴开，天光云影共徘徊。\n问渠那得清如许？为有源头活水来。",
+        "author": "朱熹",
+        "dynasty": "南宋",
+        "meaning": "半亩大的方形池塘像镜子一样清澈，天光云影在水面荡漾。为何如此清？因有源头活水注入。"
+    };
+
+    // 动态渲染数据到HTML中
+    document.getElementById('title').textContent = data.title;
+    document.getElementById('author-info').textContent = `${data.dynasty} ${data.author}`;
+    document.getElementById('content').textContent = data.content;
+    document.getElementById('meaning').textContent = data.meaning;
+</script>
+</body>
+</html>
